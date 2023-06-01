@@ -64,7 +64,7 @@ class App extends Component {
     )
       .then((response) => {
         response.text();
-        console.log(response);
+        console.log("hi", response);
       })
       .then((result) => console.log(result))
       .catch((error) => console.log("error", error));
