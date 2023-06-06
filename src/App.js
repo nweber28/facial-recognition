@@ -8,13 +8,13 @@ import "./App.css";
 
 window.process = {};
 
-// const Clarifai = require("clarifai");
+const Clarifai = require("clarifai");
 
-// // const app = new Clarifai.App({
-// //   apiKey: "ab2787f7c4044364b006f9d240d50949",
-// // });
+const app = new Clarifai.App({
+  apiKey: "ab2787f7c4044364b006f9d240d50949",
+});
 
-let IMAGE_URL = "";
+// let IMAGE_URL = "";
 
 class App extends Component {
   constructor() {
@@ -22,8 +22,11 @@ class App extends Component {
     this.state = {
       input: "",
       imageUrl: "",
+      box: {},
     };
   }
+
+  calculateFaceLocation = (data) => {};
 
   onInputChange = (event) => {
     this.setState({ input: event.target.value });
@@ -31,43 +34,36 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    IMAGE_URL = this.state.input;
 
-    let raw = JSON.stringify({
-      user_app_id: {
-        user_id: "clarifai",
-        app_id: "main",
-      },
-      inputs: [
+    app.models
+      .predict(
         {
-          data: {
-            image: {
-              url: IMAGE_URL,
-            },
-          },
+          id: "face-detection",
+          name: "face-detection",
+          version: "6dc7e46bc9124c5c8824be4822abe105",
+          type: "visual-detector",
         },
-      ],
-    });
+        this.state.input
+      )
 
-    let requestOptions = {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        Authorization: "Key 2a60cb99907e423ba396e2e67cd66442",
-      },
-      body: raw,
-    };
-
-    fetch(
-      `https://api.clarifai.com/v2/models/face-detection/versions/6dc7e46bc9124c5c8824be4822abe105/outputs`,
-      requestOptions
-    )
       .then((response) => {
-        response.text();
         console.log("hi", response);
+        if (response) {
+          fetch("http://localhost:3000/image", {
+            method: "put",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              // id: this.state.user.id,
+            }),
+          })
+            .then((response) => response.json())
+            .then((count) => {
+              this.setState(Object.assign(this.state.user, { entries: count }));
+            });
+        }
+        this.displayFaceBox(this.calculateFaceLocation(response));
       })
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error));
+      .catch((err) => console.log(err));
   };
 
   render() {
