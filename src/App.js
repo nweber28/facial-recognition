@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Navigation from "./components/Navigation/Navigation";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import Logo from "./components/Logo/Logo";
+import Signin from "./components/Signin/Signin";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import "./App.css";
@@ -13,8 +14,6 @@ const Clarifai = require("clarifai");
 const app = new Clarifai.App({
   apiKey: "ab2787f7c4044364b006f9d240d50949",
 });
-
-// let IMAGE_URL = "";
 
 class App extends Component {
   constructor() {
@@ -72,7 +71,7 @@ class App extends Component {
     return (
       <div className="App">
         <Navigation />
-
+        <Signin />
         <Logo />
         <Rank />
         <ImageLinkForm
